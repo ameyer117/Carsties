@@ -1,4 +1,5 @@
 using AuctionService.Data;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,27 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddMassTransit(x =>
+{
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
+    x.UsingRabbitMq(
+        (context, configuration) =>
+        {
+            configuration.Host(
+                "localhost",
+                "/",
+                h =>
+                {
+                    h.Username("rabbitmq");
+                    h.Password("rabbitmq");
+                }
+            );
+
+            configuration.ConfigureEndpoints(context);
+        }
+    );
+});
 
 builder.Services.AddDbContext<AuctionDbContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
