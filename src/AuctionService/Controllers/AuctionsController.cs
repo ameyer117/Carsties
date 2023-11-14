@@ -61,13 +61,16 @@ public class AuctionsController : ControllerBase
     {
         // Create a new auction from the create auction dto
         var auction = _mapper.Map<Auction>(auctionDto);
+        
+        
         _context.Auctions.Add(auction);
-        await _context.SaveChangesAsync();
         
         var newAuction = _mapper.Map<AuctionDto>(auction);
         
         // Publish the auction created event
         await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
+        
+        await _context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetAuction), new { id = auction.Id }, _mapper.Map<AuctionDto>(auction));
     }
@@ -87,6 +90,8 @@ public class AuctionsController : ControllerBase
 
         // Update the auction (Item) with the new values
         _mapper.Map(auctionDto, auction.Item);
+
+        await _publishEndpoint.Publish(_mapper.Map<AuctionUpdated>(auction));
             
         await _context.SaveChangesAsync();
 
@@ -107,6 +112,9 @@ public class AuctionsController : ControllerBase
         }
 
         _context.Auctions.Remove(auction);
+        
+        await _publishEndpoint.Publish<AuctionDeleted>(new {Id = auction.Id.ToString()});
+        
         await _context.SaveChangesAsync();
 
         return NoContent();

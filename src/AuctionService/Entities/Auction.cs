@@ -28,7 +28,7 @@ public class Auction
 
 public enum StatusType
 {
-    Live = 1,
-    Finished = 2,
-    ReserveNotMet = 3
+    Live,
+    Finished,
+    ReserveNotMet
 }

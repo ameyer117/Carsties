@@ -23,15 +23,13 @@ public class DbInitializer
 
         await DB.Index<Item>().Key(it => it.Color, KeyType.Text).CreateAsync();
 
-        var result = await DB.Index<Item>()
+        await DB.Index<Item>()
             .Key(it => it.Make, KeyType.Text)
             .Key(it => it.Model, KeyType.Text)
             .Key(it => it.Color, KeyType.Text)
             .CreateAsync();
 
-        Console.WriteLine(result);
-
-        var count = await DB.CountAsync<Item>();
+        await DB.CountAsync<Item>();
 
         using var scope = app.Services.CreateScope();
 

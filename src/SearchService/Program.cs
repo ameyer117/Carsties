@@ -31,6 +31,16 @@ builder.Services.AddMassTransit(x =>
                 }
             );
 
+            configuration.ReceiveEndpoint(
+                "search-auction-created",
+                e =>
+                {
+                    e.UseMessageRetry(r => r.Interval(5, 5));
+
+                    e.ConfigureConsumer<AuctionCreatedConsumer>(context);
+                }
+            );
+
             configuration.ConfigureEndpoints(context);
         }
     );

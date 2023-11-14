@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - /var/lib/postgresql/data
   mongodb:
     image: mongo
     restart: always
@@ -20,7 +20,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
-      - mongo-data:/data/db
+      - /data/db
   rabbitmq:
     image: rabbitmq:3-management-alpine
     restart: always
@@ -31,8 +31,4 @@ services:
       RABBITMQ_DEFAULT_USER: rabbitmq
       RABBITMQ_DEFAULT_PASS: rabbitmq
     volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
-volumes:
-  postgres-data:
-  mongo-data:
-  rabbitmq-data:
+      - /var/lib/rabbitmq
